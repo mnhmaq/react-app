@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Person from './Person/Person';
 // import logo from './logo.svg';
-import './App.css';
+import Styles from './App.css';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary'
 
 class App extends Component {
   state = {
@@ -52,32 +53,35 @@ class App extends Component {
   }
 
   render() {
-    const style = {
-      backgroundColor: 'green',
-      font: 'inherit',
-      border: '1px solid blue',
-      padding: '8px',
-      cursor: 'pointer'
-    };
+    let btnClass = '';
 
-    
     let persons = (
       this.state.showPersons ?
         <div>
           {this.state.persons.map((person, index) => {
-            return <Person 
+            return <ErrorBoundary key={person.id}><Person 
               name = {person.name} 
-              age={person.age} 
-              key={person.id}
+              age={person.age}
               click={this.deletePersonHandler.bind(this, index)}
-              change={(event) => this.nameChangeHandler(event, person.id)} />
+              change={(event) => this.nameChangeHandler(event, person.id)} /></ErrorBoundary>
           })}
         </div>
         :
         null
     );
+
+    btnClass = this.state.showPersons ? Styles.Red : '';
+
+    const classes = [];
+    if ( this.state.persons.length <= 2 ) {
+      classes.push( Styles.red ); // classes = ['red']
+    }
+    if ( this.state.persons.length <= 1 ) {
+      classes.push( Styles.bold ); // classes = ['red', 'bold']
+    }
+
     return (
-      <div className="App">
+      <div className={Styles.App}>
         {/* <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
@@ -87,8 +91,9 @@ class App extends Component {
         </p> */
         <div>
           <h1>This React App</h1>
+          <p className={classes.join( ' ' )}>This is really working!</p>
           <button 
-            style={style} 
+            className={btnClass}
             onClick={this.togglePersonsHandler}>Toogle Persons</button>
           {/* <Person 
             name={this.state.persons[0].name} 
